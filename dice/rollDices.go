@@ -13,9 +13,9 @@ import (
 	"vtt_api/utils"
 )
 
-func RollDices(message models.Message) (models.DiceCommandResult, error) {
+func RollDices(message string) (models.DiceCommandResult, error) {
 
-	args := strings.ToLower(strings.Join(strings.Split(message.Content, "")[1:], ""))
+	args := strings.ToLower(strings.Join(strings.Split(message, "")[1:], ""))
 	mathMatches := MATH_REGEX.FindAllStringIndex(args, -1)
 
 	//Separando operações de rolagem
@@ -76,6 +76,8 @@ func RollDices(message models.Message) (models.DiceCommandResult, error) {
 	rollModifier := RollModifier{&commandRes}
 	rollModifier.Apply()
 
+	ExecuteRollMath(&commandRes)
+
 	return commandRes, nil
 
 }
@@ -112,7 +114,7 @@ func rollDices(rollOperation models.RollOperation) ([]models.DieRollResult, erro
 	var amount int
 	var size int
 	results := []models.DieRollResult{}
-	var waitingForAmount bool
+	var waitingForSize bool
 	var startOfModifiers int
 	var willExplode bool
 	var willReroll bool
@@ -140,12 +142,16 @@ func rollDices(rollOperation models.RollOperation) ([]models.DieRollResult, erro
 	for i, op := range rollOperation.Roll {
 		isNum := NUM_REGEX.MatchString(op)
 
-		if !isNum || !slices.Contains(BASIC_ROLL_TK, op) {
+		if !(isNum || slices.Contains(BASIC_ROLL_TK, op)) {
 			if i == 0 {
 				return nil, fmt.Errorf("expected dice definition wrong operation received %s", op)
 			} else {
-				startOfModifiers = i
+				startOfModifiers = i + 1
 				break
+			}
+		} else {
+			if i == len(rollOperation.Roll)-1 {
+				startOfModifiers = i + 1
 			}
 		}
 		// end of process
@@ -158,10 +164,17 @@ func rollDices(rollOperation models.RollOperation) ([]models.DieRollResult, erro
 			willReroll = true
 		}
 
-		if willReroll && isNum {
-			rerollUnder, _ = strconv.Atoi(op)
-		} else {
-			return nil, fmt.Errorf("expected reroll threshold")
+		if willReroll {
+			if isNum {
+				rerollUnder, _ = strconv.Atoi(op)
+			} else {
+				return nil, fmt.Errorf("expected reroll threshold")
+			}
+		}
+
+		if slices.Contains(TK_DICE, op) {
+			waitingForSize = true
+			continue
 		}
 
 		if i == 0 {
@@ -169,7 +182,7 @@ func rollDices(rollOperation models.RollOperation) ([]models.DieRollResult, erro
 				amount, _ = strconv.Atoi(op)
 			} else if utils.HasAnyStringFromSliceInString(op, TK_ROLL) {
 				amount = 1
-				waitingForAmount = true
+
 				if utils.HasAnyStringFromSliceInString(op, TK_FUDGE) {
 					size = -1
 				}
@@ -177,11 +190,12 @@ func rollDices(rollOperation models.RollOperation) ([]models.DieRollResult, erro
 				return nil, fmt.Errorf("invalid initial operation %s", op)
 			}
 		} else {
-			if waitingForAmount {
-				amount, _ = strconv.Atoi(op)
-				waitingForAmount = false
-			} else {
-				return nil, fmt.Errorf("expected amount of dices %s", op)
+			if waitingForSize {
+				size, _ = strconv.Atoi(op)
+				waitingForSize = false
+				if !isNum {
+					return nil, fmt.Errorf("expected size of dices %s", op)
+				}
 			}
 		}
 	}

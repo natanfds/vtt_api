@@ -82,6 +82,6 @@ var (
 		TK_RED_OR_BLUE,
 	)
 
-	NUM_REGEX  = regexp.MustCompile(`^\d+$`)
+	NUM_REGEX  = regexp.MustCompile(`-?\d+\.?\d*`)
 	MATH_REGEX = regexp.MustCompile(`[\+\-\*/]`)
 )
