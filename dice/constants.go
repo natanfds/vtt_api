@@ -12,7 +12,7 @@ var (
 	TK_MINUS               = []string{"-"}
 	TK_MULTIPLY            = []string{"*"}
 	TK_DIVIDE              = []string{"/"}
-	TK_FUDGE               = []string{"df"}
+	TK_FUDGE               = []string{"f"}
 	TK_KEEP_HIGH           = []string{"kh"}
 	TK_KEEP_MEDIUM         = []string{"km"}
 	TK_KEEP_LOW            = []string{"kl"}

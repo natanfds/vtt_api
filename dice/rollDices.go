@@ -134,7 +134,7 @@ func rollDices(rollOperation models.RollOperation) ([]models.DieRollResult, erro
 			return res, nil
 		} else {
 			if !slices.Contains(TK_FUDGE, rollOperation.Roll[0]) {
-				return nil, fmt.Errorf("expected fudge token")
+				return nil, fmt.Errorf("too short")
 			}
 		}
 	}
@@ -182,18 +182,18 @@ func rollDices(rollOperation models.RollOperation) ([]models.DieRollResult, erro
 				amount, _ = strconv.Atoi(op)
 			} else if utils.HasAnyStringFromSliceInString(op, TK_ROLL) {
 				amount = 1
-
-				if utils.HasAnyStringFromSliceInString(op, TK_FUDGE) {
-					size = -1
-				}
 			} else {
 				return nil, fmt.Errorf("invalid initial operation %s", op)
 			}
 		} else {
 			if waitingForSize {
-				size, _ = strconv.Atoi(op)
-				waitingForSize = false
-				if !isNum {
+				if isNum {
+					size, _ = strconv.Atoi(op)
+					waitingForSize = false
+				} else if slices.Contains(TK_FUDGE, op) {
+					size = -1
+					waitingForSize = false
+				} else {
 					return nil, fmt.Errorf("expected size of dices %s", op)
 				}
 			}
