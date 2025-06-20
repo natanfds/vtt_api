@@ -36,5 +36,26 @@ var _ = Describe("RollService", func() {
 			Expect(result.Total).To(BeNumerically(">=", 1))
 			Expect(result.Total).To(BeNumerically("<=", 6))
 		})
+
+		It("Deve rolar um dado fudge sem indicação da quantidade", func() {
+			result, err := dice.RollDices("/r df")
+			Expect(err).ToNot(HaveOccurred())
+			Expect(result.Total).To(BeNumerically(">=", -1))
+			Expect(result.Total).To(BeNumerically("<=", 1))
+		})
+
+		It("Deve rolar 10 dados fudge", func() {
+			result, err := dice.RollDices("/r 10df")
+			Expect(err).ToNot(HaveOccurred())
+			Expect(result.Total).To(BeNumerically(">=", -10))
+			Expect(result.Total).To(BeNumerically("<=", 10))
+		})
+
+		It("Deve rolar 10 dados de 6 faces", func() {
+			result, err := dice.RollDices("/r 10d6")
+			Expect(err).ToNot(HaveOccurred())
+			Expect(result.Total).To(BeNumerically(">=", 10))
+			Expect(result.Total).To(BeNumerically("<=", 60))
+		})
 	})
 })
