@@ -174,14 +174,15 @@ func rollDices(rollOperation models.RollOperation) ([]models.DieRollResult, erro
 
 		if slices.Contains(TK_DICE, op) {
 			waitingForSize = true
+			if i == 0 {
+				amount = 1
+			}
 			continue
 		}
 
 		if i == 0 {
 			if isNum {
 				amount, _ = strconv.Atoi(op)
-			} else if utils.HasAnyStringFromSliceInString(op, TK_ROLL) {
-				amount = 1
 			} else {
 				return nil, fmt.Errorf("invalid initial operation %s", op)
 			}
