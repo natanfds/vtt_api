@@ -71,6 +71,7 @@ func (r *RollModifier) yingYang() {
 				validCounts++
 			} else if validCounts == 1 {
 				(*r.res).Results[i].YingOrYang = "Yang"
+				(*r.res).Results[i].MathOperation = "-"
 				validCounts++
 			} else {
 				(*r.res).Results[i].Valid = false

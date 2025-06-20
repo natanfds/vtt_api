@@ -12,23 +12,16 @@ func ExecuteRollMath(rollCommandResult *models.DiceCommandResult) {
 	}
 
 	for _, roll := range (*rollCommandResult).Results {
-		if nextOp == "" {
+		switch nextOp {
+		case "":
 			res += float32(roll.DieValue)
-		}
-
-		if nextOp == "-" {
+		case "-":
 			res -= float32(roll.DieValue)
-		}
-
-		if nextOp == "+" {
+		case "+":
 			res += float32(roll.DieValue)
-		}
-
-		if nextOp == "*" {
+		case "*":
 			res *= float32(roll.DieValue)
-		}
-
-		if nextOp == "/" {
+		case "/":
 			res /= float32(roll.DieValue)
 		}
 
