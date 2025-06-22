@@ -105,7 +105,7 @@ var _ = Describe("RollService", func() {
 			var result models.DiceCommandResult
 			var err error
 
-			for i := 0; i < 10; i++ {
+			for i := 0; i < 50; i++ {
 				result, err = dice.RollDices("/r 1d2ex")
 				if len(result.Results) > 1 {
 					break
