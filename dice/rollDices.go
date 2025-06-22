@@ -157,6 +157,9 @@ func rollDices(rollOperation models.RollOperation) ([]models.DieRollResult, erro
 		// end of process
 
 		if slices.Contains(TK_EXPLODE, op) {
+			if size == 1 {
+				return nil, fmt.Errorf("1d1 does not explode")
+			}
 			willExplode = true
 		}
 
