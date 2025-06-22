@@ -38,12 +38,15 @@ var (
 
 	TK_ORDER = [][]string{
 		TK_ROLL,
-		TK_KEEP,
-		TK_CRIT,
-		TK_EXPLODE,
-		TK_REROLL,
-		TK_SUCESS_FAIL,
-		TK_SPECIAL_ROLLS,
+		TK_FUDGE,
+		utils.JoinSlices(
+			TK_EXPLODE,
+			TK_KEEP,
+			TK_CRIT,
+			TK_REROLL,
+			TK_SUCESS_FAIL,
+			TK_SPECIAL_ROLLS,
+		),
 	}
 
 	ALL_TK = utils.JoinSlices(
@@ -80,6 +83,7 @@ var (
 	ALL_MOD_WHO_NOT_NEED_AMOUNT = utils.JoinSlices(
 		TK_YING_YANG,
 		TK_RED_OR_BLUE,
+		TK_EXPLODE,
 	)
 
 	NUM_REGEX  = regexp.MustCompile(`-?\d+\.?\d*`)
