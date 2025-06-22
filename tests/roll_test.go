@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"vtt_api/dice"
+	"vtt_api/models"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -98,6 +99,26 @@ var _ = Describe("RollService", func() {
 			result, err := dice.RollDices("/r 10 / 5 + 5")
 			Expect(err).ToNot(HaveOccurred())
 			Expect(result.Total).To(BeNumerically("==", 7))
+		})
+
+		It("Deve rolar 1d2 e explodir o resultado", func() {
+			var result models.DiceCommandResult
+			var err error
+
+			for i := 0; i < 10; i++ {
+				result, err = dice.RollDices("/r 1d2ex")
+				if len(result.Results) > 1 {
+					break
+				}
+			}
+
+			Expect(err).ToNot(HaveOccurred())
+			Expect(len(result.Results)).To(BeNumerically(">", 1))
+		})
+
+		It("Ao rolar 1d1 deve ocorrer erro se explodido", func() {
+			_, err := dice.RollDices("/r 1d1ex")
+			Expect(err).To(HaveOccurred())
 		})
 	})
 })
