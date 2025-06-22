@@ -57,5 +57,47 @@ var _ = Describe("RollService", func() {
 			Expect(result.Total).To(BeNumerically(">=", 10))
 			Expect(result.Total).To(BeNumerically("<=", 60))
 		})
+
+		It("Deve retornar 10", func() {
+			result, err := dice.RollDices("/r 10")
+			Expect(err).ToNot(HaveOccurred())
+			Expect(result.Total).To(BeNumerically("==", 10))
+		})
+
+		It("Deve somar 10 e 5 para retornar 15", func() {
+			result, err := dice.RollDices("/r 10 + 5")
+			Expect(err).ToNot(HaveOccurred())
+			Expect(result.Total).To(BeNumerically("==", 15))
+		})
+
+		It("Deve subtrair 5 de 10 para retornar 5", func() {
+			result, err := dice.RollDices("/r 10 - 5")
+			Expect(err).ToNot(HaveOccurred())
+			Expect(result.Total).To(BeNumerically("==", 5))
+		})
+
+		It("Deve multiplicar 10 por 5 para retornar 50", func() {
+			result, err := dice.RollDices("/r 10 * 5")
+			Expect(err).ToNot(HaveOccurred())
+			Expect(result.Total).To(BeNumerically("==", 50))
+		})
+
+		It("Deve dividir 10 por 5 para retornar 2", func() {
+			result, err := dice.RollDices("/r 10 / 5")
+			Expect(err).ToNot(HaveOccurred())
+			Expect(result.Total).To(BeNumerically("==", 2))
+		})
+
+		It("Deve multiplicar antes de subitrair e retornar 0", func() {
+			result, err := dice.RollDices("/r 10 - 5 * 2")
+			Expect(err).ToNot(HaveOccurred())
+			Expect(result.Total).To(BeNumerically("==", 0))
+		})
+
+		It("Deve dividir antes de somar e retornar 7", func() {
+			result, err := dice.RollDices("/r 10 / 5 + 5")
+			Expect(err).ToNot(HaveOccurred())
+			Expect(result.Total).To(BeNumerically("==", 7))
+		})
 	})
 })
